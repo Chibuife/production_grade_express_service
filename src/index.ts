@@ -3,10 +3,11 @@ import 'dotenv/config';
 import express from 'express';
 import userRoutes from './routes/User.js';
 import authRoutes from './routes/Auth.js';
-// import morgan from 'morgan';
+import morgan from 'morgan';
 import { logger } from './utils/logger.js';
 import { createServer } from 'node:http';
 import { connectToDatabase, disconnectFromDatabase } from './config/db/index.js';
+import requestId from './middleware/requestId.js';
 
 const app = express();
 const server = createServer(app);
@@ -18,6 +19,8 @@ const stream = {
 };
 
 app.use(express.json());
+app.use(requestId);
+
 // app.use(morgan(':method :url :status :res[content-length] - :response-time ms',
 //     { "stream": stream }
 // ));

@@ -10,7 +10,11 @@ interface AuthenticatedRequest extends Request {
     id: string;
     email: string;
   };
+  traceId: string;
+  requestId: string;
 }
+
+
 
 export const getUserById = async (
   req: AuthenticatedRequest,
@@ -29,7 +33,7 @@ export const getUserById = async (
       });
     }
 
-    logger.info(`Fetched profile for ${user.email}`);
+    logger.info(`[${req.requestId ?? "-"}] Fetched profile for ${user.email}`);
 
     return res.status(200).json({
       user,
@@ -109,7 +113,7 @@ export const loginUser = async (req: Request, res: Response) => {
       user.email
     );
 
-    logger.info(`User logged in: ${user.email}`);
+    logger.info(`[${(req as AuthenticatedRequest).requestId ?? "-"}] User logged in: ${user.email}`);
     await redisClient.del(key);
     return res
       .cookie("refreshToken", refreshToken, {
@@ -149,7 +153,7 @@ export const logoutUser = async (
     sameSite: "strict",
   });
 
-  logger.info(`User logged out: ${req.user?.email ?? "Unknown"}`);
+  logger.info(`[${req.requestId ?? "-"}] User logged out: ${req.user?.email ?? "Unknown"}`);
 
   return res.status(200).json({
     message: "Logout successful",
@@ -197,7 +201,7 @@ export const registerUser = async (req: Request, res: Response) => {
       user.email
     );
 
-    logger.info(`New user registered: ${user.email}`);
+    logger.info(`[${(req as AuthenticatedRequest).requestId ?? "-"}] New user registered: ${user.email}`);
 
     return res
       .cookie("refreshToken", refreshToken, {
@@ -253,7 +257,7 @@ export const refreshToken = (req: Request, res: Response) => {
       payload.email
     );
 
-    logger.info(`Access token refreshed for ${payload.email}`);
+    logger.info(`[${(req as AuthenticatedRequest).requestId ?? "-"}] Access token refreshed for ${payload.email}`);
 
     return res.status(200).json({
       token: accessToken,
@@ -313,7 +317,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
     const user = await User.findOne({ email: normalizedEmail });
 
     if (user) {
-      logger.info(`Password reset requested for ${normalizedEmail}`);
+      logger.info(`[${(req as AuthenticatedRequest).requestId ?? "-"}] Password reset requested for ${normalizedEmail}`);
     }
 
     await redisClient.incr(ipKey);
@@ -322,7 +326,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
     await redisClient.incr(emailKey);
     await redisClient.expire(emailKey, 60 * 60);
 
-    logger.info(`Password reset requested for ${normalizedEmail}`);
+    logger.info(`[${(req as AuthenticatedRequest).requestId ?? "-"}] Password reset requested for ${normalizedEmail}`);
 
     return res.status(200).json({
       message:
@@ -361,7 +365,7 @@ export const resetPassword = async (req: Request, res: Response) => {
     // Update password.
     // Invalidate reset token.
 
-    logger.info("Password reset completed");
+    logger.info(`[${(req as AuthenticatedRequest).requestId ?? "-"}] Password reset completed`);
 
     return res.status(200).json({
       message: "Password updated successfully",
@@ -418,7 +422,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
 
     // Verify email token or send verification email here.
 
-    logger.info(`Email verification requested for ${normalizedEmail}`);
+    logger.info(`[${(req as AuthenticatedRequest).requestId ?? "-"}] Email verification requested for ${normalizedEmail}`);
 
     return res.status(200).json({
       message: "Verification email sent.",
