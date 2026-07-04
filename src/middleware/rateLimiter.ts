@@ -2,16 +2,7 @@ import { rateLimit } from "express-rate-limit";
 import { RedisStore } from "rate-limit-redis";
 import redisClient from "../config/redis/index.js";
 
-export const createAccountLimiter = rateLimit({
-    windowMs: 60 * 60 * 1000,
-    max: 5,
-    message: { error: "Too many accounts created from this IP. Please try again after an hour." },
-    standardHeaders: true,
-    legacyHeaders: false,
-    store: new RedisStore({
-        sendCommand: (...args) => redisClient.sendCommand(args),
-    }),
-});
+
 
 export const getProfileLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -22,4 +13,75 @@ export const getProfileLimiter = rateLimit({
     store: new RedisStore({
         sendCommand: (...args) => redisClient.sendCommand(args),
     }),
+});
+
+
+export const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        message: "Too many login requests. Please try again later.",
+    },
+});
+
+export const registerLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 5,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        message: "Too many registration attempts. Please try again later.",
+    },
+});
+
+export const refreshLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 60,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        message: "Too many refresh requests.",
+    },
+});
+
+export const forgotPasswordLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        message: "Too many password reset requests.",
+    },
+});
+
+export const resetPasswordLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        message: "Too many password reset attempts.",
+    },
+});
+
+export const verifyEmailLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        message: "Too many verification requests.",
+    },
+});
+
+export const logoutLimiter = rateLimit({
+    windowMs: 60 * 1000,
+    max: 30,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: {
+        message: "Too many logout requests.",
+    },
 });

@@ -3,7 +3,7 @@ import 'dotenv/config';
 import express from 'express';
 import userRoutes from './routes/User.js';
 import authRoutes from './routes/Auth.js';
-import morgan from 'morgan';
+// import morgan from 'morgan';
 import { logger } from './utils/logger.js';
 import { createServer } from 'node:http';
 import { connectToDatabase, disconnectFromDatabase } from './config/db/index.js';
@@ -18,11 +18,10 @@ const stream = {
 };
 
 app.use(express.json());
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms',
-    { "stream": stream }
-));
+// app.use(morgan(':method :url :status :res[content-length] - :response-time ms',
+//     { "stream": stream }
+// ));
 
-// app.use(express.static('public'));
 
 app.use('/users', userRoutes);
 app.use('/auth', authRoutes);
@@ -35,11 +34,7 @@ app.get("/error", (req, res) => {
     res.json({ message: 'Hello World!', error: 'This is an error message' });
 });
 
-// app.listen(5000, () => {
-//     console.log("Server running on port 5000");
-//     logger.info("Server running on port 5000");
-// });
-// 114KTSTBQ1AK6Q584FRHJUXN
+
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
