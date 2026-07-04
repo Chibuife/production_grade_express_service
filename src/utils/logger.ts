@@ -14,7 +14,7 @@ export const logger = winston.createLogger({
   level: 'debug',
   // format: winston.format.json(),
   format: combine(
-    label({ label: 'Starting!' }),
+    label({ label: 'Starting Server!' }),
     timestamp(),
     myFormat,
     // prettyPrint()

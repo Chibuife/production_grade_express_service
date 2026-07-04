@@ -3,6 +3,7 @@ import 'dotenv/config';
 import express from 'express';
 import userRoutes from './routes/User.js';
 import authRoutes from './routes/Auth.js';
+import healthRoutes from './routes/health.js';
 import morgan from 'morgan';
 import { logger } from './utils/logger.js';
 import { createServer } from 'node:http';
@@ -25,7 +26,7 @@ app.use(requestId);
 //     { "stream": stream }
 // ));
 
-
+app.use("/health", healthRoutes);
 app.use('/users', userRoutes);
 app.use('/auth', authRoutes);
 app.get("/", (req, res) => {

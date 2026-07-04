@@ -4,17 +4,16 @@ import User from "../models/User.js";
 import { generateAccessToken, generateRefreshToken } from "../helper/tokens.js";
 import { logger } from "../utils/logger.js";
 import redisClient from "../config/redis/index.js";
+import UserRepository  from "../repositories/UserRepository.js";
 
 interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
     email: string;
   };
-  traceId: string;
+  traceId?: string;
   requestId: string;
 }
-
-
 
 export const getUserById = async (
   req: AuthenticatedRequest,
@@ -23,7 +22,11 @@ export const getUserById = async (
   logger.debug("getUserById controller called");
 
   try {
-    const user = await User.findById(req.user?.id).select("-password");
+    const user = await UserRepository.findUserByIdForOwner(
+      req.params.id as string,
+      req.user!.id
+    );
+
 
     if (!user) {
       logger.warn(`User not found. ID: ${req.user?.id}`);

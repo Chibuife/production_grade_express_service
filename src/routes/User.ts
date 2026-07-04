@@ -6,6 +6,6 @@ import {  getProfileLimiter } from "../middleware/rateLimiter.js";
 const router = Router();
 router.use(authenticateToken);
 
-router.get("/:id", getProfileLimiter, getUserById);
+router.get("/me", getProfileLimiter, getUserById);
 
 export default router;
