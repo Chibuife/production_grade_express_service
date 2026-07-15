@@ -19,6 +19,7 @@ const stream = {
     write: (message: string) => logger.http(message.trim()),
 };
 
+
 app.use(express.json());
 app.use(requestId);
 
